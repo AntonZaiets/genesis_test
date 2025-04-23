@@ -154,7 +154,7 @@ const TrackForm = ({ open, onClose, track, genres, onSubmit }: TrackFormProps) =
             artist: '',
             album: '',
             genres: [],
-            coverImage: ''
+            coverImage: '',
         }
     });
 
@@ -165,7 +165,7 @@ const TrackForm = ({ open, onClose, track, genres, onSubmit }: TrackFormProps) =
                 artist: track.artist,
                 album: track.album || '',
                 genres: track.genres || [],
-                coverImage: track.coverImage || ''
+                coverImage: track.coverImage || '',
             });
         }
     }, [track, reset]);

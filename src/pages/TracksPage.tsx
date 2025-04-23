@@ -16,14 +16,7 @@ import {
 } from '@mui/material';
 import { Add, Delete } from '@mui/icons-material';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-    fetchTracks,
-    fetchGenres,
-    deleteTrack,
-    updateTrack,
-    createTrack,
-    Track
-} from '../api/tracks';
+import { fetchTracks, fetchGenres, deleteTrack, updateTrack, createTrack, Track } from '../api/tracks';
 import TrackItem from '../components/TrackItem';
 import TrackForm from '../components/TrackForm';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -104,9 +97,28 @@ const TrackPage = () => {
             updateTrack(id, data),
         onSuccess: () => queryClient.invalidateQueries(['tracks']),
     });
+
     return (
-        <Container maxWidth={false} disableGutters sx={{ mt: 4, mb: 4 }}>
-            <Paper sx={{ p: 3 }}>
+        <Container
+            disableGutters
+            maxWidth={false}
+            sx={{
+                width: '100vw',
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
+            <Paper
+                sx={{
+                    flex: 1,
+                    p: 3,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                }}
+            >
                 <Box display="flex" justifyContent="space-between" mb={3}>
                     <Typography variant="h4" data-testid="tracks-header">
                         Music Tracks
@@ -151,35 +163,47 @@ const TrackPage = () => {
                             <MenuItem value="album">Album</MenuItem>
                         </Select>
                     </FormControl>
-
                     <FormControl sx={{ minWidth: 120 }}>
-                        <InputLabel>Genre</InputLabel>
+                        <InputLabel id="genre-select-label">Genre</InputLabel>
                         <Select
-                            value={filter.genres || ''}
-                            onChange={(e: SelectChangeEvent) =>
-                                handleFilterChange('genre', e.target.value)
-                            }
+                            labelId="genre-select-label"
+                            value={filter.genre || 'All'}
+                            onChange={(e: SelectChangeEvent) => {
+                                const value = e.target.value;
+                                if (value === 'All') {
+                                    handleFilterChange('genre', '');
+                                } else {
+                                    handleFilterChange('genre', value);
+                                }
+                            }}
                             label="Genre"
                             data-testid="filter-genre"
                         >
-                            <MenuItem value="">All</MenuItem>
+                            <MenuItem value="All">All</MenuItem>
                             {genres?.map(genre => (
-                                <MenuItem key={genre} value={genre}>{genre}</MenuItem>
+                                <MenuItem key={genre} value={genre}>
+                                    {genre}
+                                </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
-
                     <FormControl sx={{ minWidth: 120 }}>
-                        <InputLabel>Artist</InputLabel>
+                        <InputLabel id="artist-select-label">Artist</InputLabel>
                         <Select
-                            value={filter.artist || ''}
-                            onChange={(e: SelectChangeEvent) =>
-                                handleFilterChange('artist', e.target.value)
-                            }
+                            labelId="artist-select-label"
+                            value={filter.artist || 'All'}
+                            onChange={(e: SelectChangeEvent) => {
+                                const value = e.target.value;
+                                if (value === 'All') {
+                                    handleFilterChange('artist', '');
+                                } else {
+                                    handleFilterChange('artist', value);
+                                }
+                            }}
                             label="Artist"
                             data-testid="filter-artist"
                         >
-                            <MenuItem value="">All</MenuItem>
+                            <MenuItem value="All">All</MenuItem>
                             {[...new Set(tracksData?.tracks.map(t => t.artist))].map(artist => (
                                 <MenuItem key={artist} value={artist}>{artist}</MenuItem>
                             ))}
@@ -226,7 +250,6 @@ const TrackPage = () => {
                 ) : (
                     <>
                         <Grid container spacing={3}>
-
                             {tracksData?.tracks.map(track => (
                                 <Grid item xs={12} key={track.id}>
                                     <TrackItem
@@ -240,16 +263,16 @@ const TrackPage = () => {
                                         isSelected={selectedTracks.includes(track.id)}
                                         onSelect={() => handleSelectTrack(track.id)}
                                     />
-
                                 </Grid>
                             ))}
                         </Grid>
-
                         <CustomPagination
-                            currentPage={page}
-                            onPageChange={setPage}
                             data-testid="pagination"
+                            currentPage={page}
+                            totalPages={tracksData?.totalPages}
+                            onPageChange={setPage}
                         />
+
                     </>
                 )}
             </Paper>
@@ -309,5 +332,3 @@ const TrackPage = () => {
 };
 
 export default TrackPage;
-
-
