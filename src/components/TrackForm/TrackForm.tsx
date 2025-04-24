@@ -73,7 +73,6 @@ const TrackForm = ({ open, onClose, track, genres, onSubmit }: ITrackForm) => {
                             />
                         )}
                     />
-
                     <Controller
                         name="artist"
                         control={control}
@@ -89,7 +88,6 @@ const TrackForm = ({ open, onClose, track, genres, onSubmit }: ITrackForm) => {
                             />
                         )}
                     />
-
                     <Controller
                         name="album"
                         control={control}
@@ -102,7 +100,6 @@ const TrackForm = ({ open, onClose, track, genres, onSubmit }: ITrackForm) => {
                             />
                         )}
                     />
-
                     <Controller
                         name="genres"
                         control={control}
@@ -141,7 +138,6 @@ const TrackForm = ({ open, onClose, track, genres, onSubmit }: ITrackForm) => {
                             />
                         )}
                     />
-
                     <Controller
                         name="coverImage"
                         control={control}
@@ -165,7 +161,7 @@ const TrackForm = ({ open, onClose, track, genres, onSubmit }: ITrackForm) => {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={onClose}>Cancel</Button>
+                    <Button onClick={onClose} data-testid="cancel-button">Cancel</Button>
                     <Button type="submit" variant="contained" data-testid="submit-button">
                         {track ? 'Update' : 'Create'}
                     </Button>

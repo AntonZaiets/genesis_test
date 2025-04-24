@@ -18,7 +18,7 @@ const CustomPagination = ({ currentPage, totalPages = 5, onPageChange }: IPagina
             >
                 Previous
             </Button>
-            <span>Page {currentPage} of {totalPages}</span>
+            <span data-testid="pagination-info">Page {currentPage} of {totalPages}</span>
             <Button
                 variant="outlined"
                 onClick={() => onPageChange(currentPage + 1)}

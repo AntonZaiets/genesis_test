@@ -12,7 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { uploadFile } from '../../api/dropboxService.ts';
 import { uploadFileNameToBackend } from '../../api/tracks.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import {IUploadModal} from './Interface';
+import { IUploadModal } from './Interface';
 
 const UploadModal = ({ open, trackId, onClose, onUploadSuccess }: IUploadModal) => {
     const [file, setFile] = useState<File | null>(null);
@@ -25,6 +25,8 @@ const UploadModal = ({ open, trackId, onClose, onUploadSuccess }: IUploadModal) 
             setFile(e.target.files[0]);
         }
     };
+
+
     const handleUpload = async () => {
         if (!file || !trackId) return;
 
@@ -48,13 +50,13 @@ const UploadModal = ({ open, trackId, onClose, onUploadSuccess }: IUploadModal) 
     };
 
     return (
-        <Dialog open={open} onClose={onClose} data-testid='upload-modal'>
+        <Dialog open={open} onClose={onClose} data-testid="upload-modal">
             <DialogTitle>
                 Upload Audio File
                 <IconButton
                     onClick={onClose}
                     sx={{ position: 'absolute', right: 8, top: 8 }}
-                    data-testid='close-upload-button'
+                    data-testid="close-upload-button"
                 >
                     <CloseIcon />
                 </IconButton>
@@ -62,24 +64,24 @@ const UploadModal = ({ open, trackId, onClose, onUploadSuccess }: IUploadModal) 
 
             <DialogContent>
                 <input
-                    type='file'
-                    accept='.mp3,.wav'
+                    type="file"
+                    accept=".mp3,.wav"
                     onChange={handleFileChange}
-                    data-testid='file-input'
+                    data-testid="file-input"
                 />
-                {file && <p data-testid='selected-file'>{file.name}</p>}
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {file && <p data-testid="selected-file">{file.name}</p>}
+                {error && <p style={{ color: 'red' }} data-testid="error-message">{error}</p>}
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={onClose} data-testid="cancel-upload" >Cancel</Button>
                 <Button
                     onClick={handleUpload}
                     disabled={!file || isUploading}
-                    variant='contained'
-                    data-testid='upload-submit'
+                    variant="contained"
+                    data-testid="upload-submit"
                 >
-                    {isUploading ? <CircularProgress size={24} /> : 'Upload'}
+                    {isUploading ? <CircularProgress size={24} data-testid="upload-progress" /> : 'Upload'}
                 </Button>
             </DialogActions>
         </Dialog>
@@ -87,4 +89,5 @@ const UploadModal = ({ open, trackId, onClose, onUploadSuccess }: IUploadModal) 
 };
 
 export default UploadModal;
+
 

@@ -9,24 +9,24 @@ const BulkActionsSection = ({
                                 tracksData
                             }) => (
     isSelectMode && (
-        <Box display="flex" alignItems="center" gap={2} mb={2}>
+        <Box data-testid="bulk-actions-section" display="flex" alignItems="center" gap={2} mb={2}>
             <FormControlLabel
                 control={
                     <Checkbox
+                        data-testid="select-all"
                         checked={selectedTracks.length === tracksData?.tracks.length}
                         onChange={onToggleSelectAll}
-                        data-testid="select-all"
                     />
                 }
                 label={`Selected ${selectedTracks.length}`}
             />
             {selectedTracks.length > 0 && (
                 <Button
+                    data-testid="bulk-delete-button"
                     variant="contained"
                     color="error"
                     startIcon={<Delete />}
                     onClick={onBulkDelete}
-                    data-testid="bulk-delete-button"
                 >
                     Delete Selected
                 </Button>

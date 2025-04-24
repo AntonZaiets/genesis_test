@@ -13,15 +13,19 @@ const TrackPage = () => {
     const state = useTrackPageState();
 
     return (
-        <Container disableGutters
-                   maxWidth={false}
-                   sx={{
-                       width: '100vw',
-                       height: '100vh',
-                       display: 'flex',
-                       flexDirection: 'column',
-                   }}>
-            <Paper sx={{
+        <Container
+            data-testid="track-page-container"
+            disableGutters
+            maxWidth={false}
+            sx={{
+                width: '100vw',
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+            }}>
+            <Paper
+                data-testid="track-page-main"
+                sx={{
                 flex: 1,
                 p: 3,
                 display: 'flex',
@@ -30,11 +34,13 @@ const TrackPage = () => {
                 overflowX: 'hidden',
             }}>
                 <HeaderSection
+                    data-testid="header-section"
                     isSelectMode={state.isSelectMode}
                     onToggleSelectMode={() => state.setIsSelectMode(!state.isSelectMode)}
                     onOpenModal={() => state.setIsModalOpen(true)}
                 />
                 <FiltersSection
+                    data-testid="filters-section"
                     searchTerm={state.searchTerm}
                     onSearchChange={state.setSearchTerm}
                     sort={state.sort}
@@ -45,6 +51,7 @@ const TrackPage = () => {
                     tracksData={state.tracksData}
                 />
                 <BulkActionsSection
+                    data-testid="bulk-actions-section"
                     isSelectMode={state.isSelectMode}
                     selectedTracks={state.selectedTracks}
                     onToggleSelectAll={() => state.setSelectedTracks((prev) =>
@@ -56,16 +63,17 @@ const TrackPage = () => {
                     tracksData={state.tracksData}
                 />
                 {state.isLoading ? (
-                    <LoadingIndicator />
+                    <LoadingIndicator data-testid="loading-indicator"/>
                 ) : state.isError ? (
-                    <Typography color="error">Error loading tracks</Typography>
+                    <Typography data-testid="error-message" color="error">Error loading tracks</Typography>
                 ) : state.tracksData?.tracks.length === 0 ? (
-                    <Typography variant="h6" align="center" sx={{ mt: 4 }}>
+                    <Typography data-testid="no-tracks" variant="h6" align="center" sx={{ mt: 4 }}>
                         No Tracks Available
                     </Typography>
                 ) : (
                     <>
                         <TracksListSection
+                            data-testid="tracks-list-section"
                             tracksData={state.tracksData}
                             isSelectMode={state.isSelectMode}
                             selectedTracks={state.selectedTracks}
@@ -86,6 +94,7 @@ const TrackPage = () => {
                 )}
             </Paper>
             <TrackForm
+                data-testid="track-form-modal"
                 open={state.isModalOpen || !!state.editingTrackId}
                 onClose={() => {
                     state.setIsModalOpen(false);
@@ -107,6 +116,7 @@ const TrackPage = () => {
                 genres={state.genres || []}
             />
             <ConfirmDialog
+                data-testid="confirm-delete-dialog"
                 open={!!state.deletingTrackId}
                 onClose={() => state.setDeletingTrackId(null)}
                 onConfirm={() => {
@@ -117,6 +127,7 @@ const TrackPage = () => {
                 message="Are you sure you want to delete this track?"
             />
             <ConfirmDialog
+                data-testid="confirm-bulk-delete-dialog"
                 open={state.isBulkConfirmOpen}
                 onClose={() => state.setIsBulkConfirmOpen(false)}
                 onConfirm={() => state.deleteMultipleMutation.mutate(state.selectedTracks)}

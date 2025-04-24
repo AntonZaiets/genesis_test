@@ -50,10 +50,18 @@ const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect
             <Box display='flex' alignItems='center' gap={2}>
                 <Avatar src={track.coverImage || '/default-cover.png'} sx={{ width: 50, height: 50 }} />
                 <Box>
-                    <Typography variant='subtitle1' fontWeight={600}>
+                    <Typography
+                        variant='subtitle1'
+                        fontWeight={600}
+                        data-testid={`track-item-${track.id}-title`}
+                    >
                         {track.title}
                     </Typography>
-                    <Typography variant='body2' color='text.secondary'>
+                    <Typography
+                        variant='body2'
+                        color='text.secondary'
+                        data-testid={`track-item-${track.id}-artist`}
+                    >
                         {track.artist}
                     </Typography>
                     {track.album && (
@@ -76,7 +84,7 @@ const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect
             <Box sx={{display: 'flex', flexDirection: 'row'}}>
                 {audioUrl && (
                     <Box sx={{ flexGrow: 1, width: '50vw', minWidth: 200, marginRight: 10 }}>
-                        <audio controls src={audioUrl} style={{ width: '100%' }} />
+                        <audio controls src={audioUrl} style={{ width: '100%' }} data-testid={`audio-player-${track.id}`}/>
                     </Box>
                 )}
 
@@ -113,3 +121,5 @@ const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect
 };
 
 export default TrackItem;
+
+

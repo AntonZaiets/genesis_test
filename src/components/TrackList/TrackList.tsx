@@ -74,9 +74,9 @@ const TracksListSection = ({
                                onEditTrack,
                                onDeleteTrack
                            }) => (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} data-testid="tracks-list">
         {tracksData?.tracks.map((track) => (
-            <Grid item xs={12} key={track.id}>
+            <Grid item xs={12} key={track.id} data-testid={`track-item-${track.id}`}>
                 <TrackItem
                     track={track}
                     onEdit={() => onEditTrack(track.id)}
@@ -84,6 +84,12 @@ const TracksListSection = ({
                     isSelectMode={isSelectMode}
                     isSelected={selectedTracks.includes(track.id)}
                     onSelect={() => onSelectTrack(track.id)}
+                    data-testid={{
+                        title: `track-item-${track.id}-title`,
+                        artist: `track-item-${track.id}-artist`,
+                        edit: `edit-track-${track.id}`,
+                        delete: `delete-track-${track.id}`,
+                    }}
                 />
             </Grid>
         ))}
