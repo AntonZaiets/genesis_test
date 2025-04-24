@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Button, Checkbox, Avatar, IconButton, Box, Chip } from '@mui/material';
-import { Edit, Delete, CloudUpload } from '@mui/icons-material';
-import UploadModal from '../UploadModal/UploadModal.tsx';
+import { Card } from '@mui/material';
+import TrackInfo from './components/TrackInfo/TrackInfo.tsx';
+import TrackActions from './components/TrackActions/TrackActions.tsx';
+import TrackAudioPlayer from './components/TrackAudioPlayer/TrackAudioPlayer.tsx';
+import TrackCheckbox from './components/TrackCheckbox/TrackCheckbox.tsx';
+import UploadModalHandler from './components/UploadModalHandler/UploadModalHandler.tsx';
 import { getTemporaryLink } from '../../api/dropboxService.ts';
-import {ITrackItem} from './Interface';
-
+import { ITrackItem } from './Interface';
 
 const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect }: ITrackItem) => {
     const [showUpload, setShowUpload] = useState(false);
@@ -39,87 +41,21 @@ const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect
                 flexWrap: 'wrap',
             }}
         >
-            {isSelectMode && (
-                <Checkbox
-                    checked={isSelected}
-                    onChange={onSelect}
-                    data-testid={`track-checkbox-${track.id}`}
-                    sx={{ position: 'absolute', right: 8, top: 8 }}
-                />
-            )}
-            <Box display='flex' alignItems='center' gap={2}>
-                <Avatar src={track.coverImage || '/default-cover.png'} sx={{ width: 50, height: 50 }} />
-                <Box>
-                    <Typography
-                        variant='subtitle1'
-                        fontWeight={600}
-                        data-testid={`track-item-${track.id}-title`}
-                    >
-                        {track.title}
-                    </Typography>
-                    <Typography
-                        variant='body2'
-                        color='text.secondary'
-                        data-testid={`track-item-${track.id}-artist`}
-                    >
-                        {track.artist}
-                    </Typography>
-                    {track.album && (
-                        <Typography variant='caption' color='text.secondary'>
-                            {track.album}
-                        </Typography>
-                    )}
-                    <Box mt={0.5} display='flex' flexWrap='wrap' gap={0.5}>
-                        {track.genres?.map((genre) => (
-                            <Chip
-                                key={genre}
-                                label={genre}
-                                size='small'
-                                data-testid={`track-genre-${track.id}-${genre}`}
-                            />
-                        ))}
-                    </Box>
-                </Box>
-            </Box>
-            <Box sx={{display: 'flex', flexDirection: 'row'}}>
-                {audioUrl && (
-                    <Box sx={{ flexGrow: 1, width: '50vw', minWidth: 200, marginRight: 10 }}>
-                        <audio controls src={audioUrl} style={{ width: '100%' }} data-testid={`audio-player-${track.id}`}/>
-                    </Box>
-                )}
-
-                {!isSelectMode && (
-                    <Box display='flex' alignItems='center' gap={1}>
-                        <IconButton onClick={onEdit} data-testid={`edit-track-${track.id}`}>
-                            <Edit />
-                        </IconButton>
-                        <IconButton onClick={onDelete} data-testid={`delete-track-${track.id}`}>
-                            <Delete />
-                        </IconButton>
-                        <Button
-                            startIcon={<CloudUpload />}
-                            onClick={() => setShowUpload(true)}
-                            size='small'
-                            data-testid={`upload-track-${track.id}`}
-                        >
-                            Upload
-                        </Button>
-                    </Box>
-                )}
-            </Box>
-            <UploadModal
-                open={showUpload}
+            <TrackCheckbox isSelectMode={isSelectMode} isSelected={isSelected} onSelect={onSelect} trackId={track.id} />
+            <TrackInfo track={track} />
+            <TrackAudioPlayer audioUrl={audioUrl} trackId={track.id} />
+            <TrackActions
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onSelect={onSelect}
+                isSelectMode={isSelectMode}
+                isSelected={isSelected}
                 trackId={track.id}
-                onClose={() => setShowUpload(false)}
-                onUploadSuccess={async () => {
-                    const tempLink = await getTemporaryLink(`${track.id}.mp3`);
-                    setAudioUrl(tempLink);
-                }}
+                setShowUpload={setShowUpload}
             />
+            <UploadModalHandler showUpload={showUpload} setShowUpload={setShowUpload} trackId={track.id} setAudioUrl={setAudioUrl} />
         </Card>
     );
 };
 
 export default TrackItem;
-
-

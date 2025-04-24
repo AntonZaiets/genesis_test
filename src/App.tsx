@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import TrackPage from './pages/TracksPage';
+import TrackPage from './pages/TracksPage/TracksPage.tsx';
 import LoadingIndicator from './components/LoadingIndicator/LoadingIndicator.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
