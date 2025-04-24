@@ -1,122 +1,3 @@
-/*
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-
-export type TrackFormData = {
-    title: string;
-    artist: string;
-    album?: string;
-    coverImage?: string;
-};
-
-type TrackFormProps = {
-    initialData?: TrackFormData & { genres: string[] };
-    onSubmit: (data: TrackFormData & { genres: string[] }) => void;
-};
-
-const TrackForm: React.FC<TrackFormProps> = ({ initialData, onSubmit }) => {
-    const defaultValues = {
-        title: initialData?.title ?? '',
-        artist: initialData?.artist ?? '',
-        album: initialData?.album ?? '',
-        coverImage: initialData?.coverImage ?? '',
-    } satisfies TrackFormData;
-
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<TrackFormData>({
-        defaultValues,
-    });
-
-    const [genres, setGenres] = useState<string[]>(initialData?.genres || []);
-
-    const addGenre = (genre: string) => {
-        if (genre && !genres.includes(genre)) {
-            setGenres((prev) => [...prev, genre]);
-        }
-    };
-
-    const removeGenre = (genre: string) => {
-        setGenres((prev) => prev.filter((g) => g !== genre));
-    };
-
-    const submitForm = (data: TrackFormData) => {
-        onSubmit({ ...data, genres });
-    };
-
-    return (
-        <form onSubmit={handleSubmit(submitForm)} data-testid="track-form">
-            <div>
-                <label htmlFor="title">Title</label>
-                <input
-                    id="title"
-                    {...register('title', { required: 'Title is required' })}
-                    data-testid="input-title"
-                />
-                {errors.title && <span data-testid="error-title">{errors.title.message}</span>}
-            </div>
-
-            <div>
-                <label htmlFor="artist">Artist</label>
-                <input
-                    id="artist"
-                    {...register('artist', { required: 'Artist is required' })}
-                    data-testid="input-artist"
-                />
-                {errors.artist && <span data-testid="error-artist">{errors.artist.message}</span>}
-            </div>
-
-            <div>
-                <label htmlFor="album">Album</label>
-                <input id="album" {...register('album')} data-testid="input-album" />
-            </div>
-
-            <div>
-                <label>Genres</label>
-                <div>
-                    {genres.map((genre, index) => (
-                        <span key={index} data-testid={`genre-${genre}`}>
-              {genre}{' '}
-                            <button type="button" onClick={() => removeGenre(genre)}>
-                X
-              </button>
-            </span>
-                    ))}
-                </div>
-                <button type="button" onClick={() => addGenre(prompt('Enter genre') || '')}>
-                    + Add Genre
-                </button>
-            </div>
-
-            <div>
-                <label htmlFor="coverImage">Cover Image URL</label>
-                <input
-                    id="coverImage"
-                    {...register('coverImage', {
-                        pattern: {
-                            value: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
-                            message: 'Invalid URL',
-                        },
-                    })}
-                    data-testid="input-cover-image"
-                />
-                {errors.coverImage && (
-                    <span data-testid="error-cover-image">{errors.coverImage.message}</span>
-                )}
-            </div>
-
-            <button type="submit" data-testid="submit-button">
-                Submit
-            </button>
-        </form>
-    );
-};
-
-export default TrackForm;
-*/
-
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
@@ -130,25 +11,17 @@ import {
     DialogActions,
     IconButton
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { Track } from '../api/tracks';
-import { TrackFormData } from '../types/types';
+import CloseIcon from '@mui/icons-material/Close'
+import {ITrackForm} from "./Interface";
+import {TTrackFormData} from "../../types/types.ts";
 
-interface TrackFormProps {
-    open?: boolean;
-    onClose?: () => void;
-    track?: Track;
-    genres?: string[];
-    onSubmit: (data: TrackFormData) => void;
-}
-
-const TrackForm = ({ open, onClose, track, genres, onSubmit }: TrackFormProps) => {
+const TrackForm = ({ open, onClose, track, genres, onSubmit }: ITrackForm) => {
     const {
         control,
         handleSubmit,
         reset,
         formState: { errors }
-    } = useForm<TrackFormData>({
+    } = useForm<TTrackFormData>({
         defaultValues: {
             title: '',
             artist: '',

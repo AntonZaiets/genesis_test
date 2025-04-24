@@ -1,9 +1,11 @@
+/*
 import React, { useEffect, useState } from 'react';
-import { fetchTracks, Track, deleteTrack } from '../api/tracks';
-import TrackItem from './TrackItem';
+import { fetchTracks, deleteTrack } from '../../api/tracks.ts';
+import TrackItem from '../TrackItem/TrackItem.tsx';
+import { ITrack } from '../../types/types.ts';
 
 const TrackList: React.FC = () => {
-    const [tracks, setTracks] = useState<Track[]>([]);
+    const [tracks, setTracks] = useState<ITrack[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
@@ -39,7 +41,7 @@ const TrackList: React.FC = () => {
                 <p>Loading...</p>
             ) : (
                 <div>
-                    <h2 data-testid="tracks-header">Track List</h2>
+                    <h2 data-testid='tracks-header'>Track List</h2>
                     <div>
                         {tracks && tracks.length > 0 ? (
                             tracks.map(track => (
@@ -60,3 +62,23 @@ const TrackList: React.FC = () => {
 };
 
 export default TrackList;
+*/
+import { Grid } from '@mui/material';
+import TrackItem from '../TrackItem/TrackItem';
+
+const TrackList = ({ tracks, onEdit, onDelete, isSelectMode, selectedTracks, onSelect }) => (
+    <Grid container spacing={3}>
+        {tracks.map((track) => (
+            <Grid item xs={12} key={track.id}>
+                <TrackItem
+                    track={track}
+                    onEdit={() => onEdit(track.id)}
+                    onDelete={() => onDelete(track.id)}
+                    isSelectMode={isSelectMode}
+                    isSelected={selectedTracks.includes(track.id)}
+                    onSelect={() => onSelect(track.id)}
+                />
+            </Grid>
+        ))}
+    </Grid>
+);

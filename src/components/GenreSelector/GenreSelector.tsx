@@ -1,14 +1,8 @@
 import { Chip, TextField, Box, Autocomplete } from '@mui/material';
-import  useGenres  from '../hooks/useGenres';
+import  useGenres  from '../../hooks/useGenres.ts';
+import {IGenreSelector} from "./Interface";
 
-interface GenreSelectorProps {
-    value: string[];
-    onChange: (genres: string[]) => void;
-    error?: boolean;
-    helperText?: string;
-}
-
-const GenreSelector = ({ value, onChange, error, helperText }: GenreSelectorProps) => {
+const GenreSelector = ({ value, onChange, error, helperText }: IGenreSelector) => {
     const { data: genres } = useGenres();
 
     return (

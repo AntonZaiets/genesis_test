@@ -1,13 +1,7 @@
 import React from 'react';
 import { Button, Box } from '@mui/material';
-
-interface PaginationProps {
-    currentPage: number;
-    totalPages?: number;
-    onPageChange: (page: number) => void;
-}
-
-const CustomPagination = ({ currentPage, totalPages = 5, onPageChange }: PaginationProps) => {
+import { IPagination } from './Interface'
+const CustomPagination = ({ currentPage, totalPages = 5, onPageChange }: IPagination) => {
     return (
         <Box
             display="flex"
@@ -24,9 +18,7 @@ const CustomPagination = ({ currentPage, totalPages = 5, onPageChange }: Paginat
             >
                 Previous
             </Button>
-
             <span>Page {currentPage} of {totalPages}</span>
-
             <Button
                 variant="outlined"
                 onClick={() => onPageChange(currentPage + 1)}

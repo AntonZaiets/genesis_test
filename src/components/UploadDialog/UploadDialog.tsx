@@ -10,7 +10,6 @@ import {
     Typography,
 } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { uploadAudio, deleteAudio, Track } from '../api/tracks';
 import { toast } from 'react-toastify';
 
 interface UploadDialogProps {
@@ -49,7 +48,6 @@ const UploadDialog = ({ open, onClose, trackId, currentAudioUrl }: UploadDialogP
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(11111111111111111111111111111111, e.target);
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files;
             // Validate file type

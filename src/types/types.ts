@@ -1,16 +1,15 @@
-export interface Track {
+export interface ITrack {
     id: string;
     title: string;
     artist: string;
-    album?: string;
+    album: string;
     genres: string[];
-    coverImage?: string;
-    audioFile?: string;
-    duration?: number;
-    uploadDate?: string;
+    coverImage: string;
+    audioFile: string;
+    file?: any;
 }
 
-export type TrackFormData = {
+export type TTrackFormData = {
     title: string;
     artist: string;
     album?: string;

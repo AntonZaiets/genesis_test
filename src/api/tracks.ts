@@ -1,14 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-export interface Track {
-    audioFile: string;
-    id: string;
-    title: string;
-    artist: string;
-    album: string;
-    genres: string[];
-    coverImage: string;
-    file?: any;
-}
+import {ITrack} from '../types/types.ts';
 
 const apiClient = axios.create({
     baseURL: 'http://localhost:8003/api',
@@ -28,8 +19,8 @@ export const fetchTracks = async (
     sort = 'title',
     filter: Record<string, string> = {},
     search = ''
-): Promise<{ tracks: Track[]; totalPages: number; currentPage: number }> => {
-    const response: AxiosResponse<{ data: Track[]; meta: { page: number; totalPages: number } }> =
+): Promise<{ tracks: ITrack[]; totalPages: number; currentPage: number }> => {
+    const response: AxiosResponse<{ data: ITrack[]; meta: { page: number; totalPages: number } }> =
         await apiClient.get('/tracks', {
             params: {
                 page,
@@ -54,7 +45,7 @@ export const createTrack = async (trackData: { title: string; artist: string; al
         console.log('Track created:', response.data);
         return response.data;
     } catch (error) {
-        console.error("Error creating track", error);
+        console.error('Error creating track', error);
         throw error;
     }
 };

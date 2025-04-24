@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Button, Checkbox, Avatar, IconButton, Box, Chip } from '@mui/material';
 import { Edit, Delete, CloudUpload } from '@mui/icons-material';
-import UploadModal from './UploadModal';
-import { Track } from '../api/tracks';
-import { getTemporaryLink } from '../api/dropboxService';
+import UploadModal from '../UploadModal/UploadModal.tsx';
+import { getTemporaryLink } from '../../api/dropboxService.ts';
+import {ITrackItem} from './Interface';
 
-interface TrackItemProps {
-    track: Track;
-    onEdit: () => void;
-    onDelete: () => void;
-    isSelectMode: boolean;
-    isSelected: boolean;
-    onSelect: () => void;
-}
 
-const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect }: TrackItemProps) => {
+const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect }: ITrackItem) => {
     const [showUpload, setShowUpload] = useState(false);
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
@@ -55,26 +47,26 @@ const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect
                     sx={{ position: 'absolute', right: 8, top: 8 }}
                 />
             )}
-            <Box display="flex" alignItems="center" gap={2}>
+            <Box display='flex' alignItems='center' gap={2}>
                 <Avatar src={track.coverImage || '/default-cover.png'} sx={{ width: 50, height: 50 }} />
                 <Box>
-                    <Typography variant="subtitle1" fontWeight={600}>
+                    <Typography variant='subtitle1' fontWeight={600}>
                         {track.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant='body2' color='text.secondary'>
                         {track.artist}
                     </Typography>
                     {track.album && (
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant='caption' color='text.secondary'>
                             {track.album}
                         </Typography>
                     )}
-                    <Box mt={0.5} display="flex" flexWrap="wrap" gap={0.5}>
+                    <Box mt={0.5} display='flex' flexWrap='wrap' gap={0.5}>
                         {track.genres?.map((genre) => (
                             <Chip
                                 key={genre}
                                 label={genre}
-                                size="small"
+                                size='small'
                                 data-testid={`track-genre-${track.id}-${genre}`}
                             />
                         ))}
@@ -89,7 +81,7 @@ const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect
                 )}
 
                 {!isSelectMode && (
-                    <Box display="flex" alignItems="center" gap={1}>
+                    <Box display='flex' alignItems='center' gap={1}>
                         <IconButton onClick={onEdit} data-testid={`edit-track-${track.id}`}>
                             <Edit />
                         </IconButton>
@@ -99,7 +91,7 @@ const TrackItem = ({ track, onEdit, onDelete, isSelectMode, isSelected, onSelect
                         <Button
                             startIcon={<CloudUpload />}
                             onClick={() => setShowUpload(true)}
-                            size="small"
+                            size='small'
                             data-testid={`upload-track-${track.id}`}
                         >
                             Upload
