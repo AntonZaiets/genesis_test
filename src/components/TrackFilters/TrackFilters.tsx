@@ -1,44 +1,67 @@
-import { Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import SearchBar from './SearchBar';
+import {
+    Box,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    SelectChangeEvent
+} from '@mui/material';
+import SearchBar from '../SearchBar/SearchBar.tsx';
 
-const TrackFilters = ({ searchTerm, onSearch, sort, onSortChange, genres, filter, onFilterChange, artists }) => (
+const FiltersSection = ({
+                            searchTerm,
+                            onSearchChange,
+                            sort,
+                            onSortChange,
+                            filter,
+                            onFilterChange,
+                            genres,
+                            tracksData
+                        }) => (
     <Box display="flex" gap={2} mb={3} flexWrap="wrap">
-        <SearchBar value={searchTerm} onChange={onSearch} />
-
+        <SearchBar value={searchTerm} onChange={onSearchChange} data-testid="search-input" />
         <FormControl sx={{ minWidth: 120 }}>
             <InputLabel>Sort By</InputLabel>
-            <Select value={sort} onChange={onSortChange} label="Sort By">
+            <Select value={sort} onChange={onSortChange} label="Sort By" data-testid="sort-select">
                 <MenuItem value="title">Title</MenuItem>
                 <MenuItem value="artist">Artist</MenuItem>
                 <MenuItem value="album">Album</MenuItem>
             </Select>
         </FormControl>
-
         <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>Genre</InputLabel>
+            <InputLabel id="genre-select-label">Genre</InputLabel>
             <Select
+                labelId="genre-select-label"
                 value={filter.genre || 'All'}
-                onChange={(e) => onFilterChange('genre', e.target.value === 'All' ? '' : e.target.value)}
+                onChange={(e: SelectChangeEvent) => {
+                    const value = e.target.value;
+                    onFilterChange('genre', value === 'All' ? '' : value);
+                }}
                 label="Genre"
+                data-testid="filter-genre"
             >
                 <MenuItem value="All">All</MenuItem>
-                {genres.map((genre) => (
+                {genres?.map((genre) => (
                     <MenuItem key={genre} value={genre}>
                         {genre}
                     </MenuItem>
                 ))}
             </Select>
         </FormControl>
-
         <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>Artist</InputLabel>
+            <InputLabel id="artist-select-label">Artist</InputLabel>
             <Select
+                labelId="artist-select-label"
                 value={filter.artist || 'All'}
-                onChange={(e) => onFilterChange('artist', e.target.value === 'All' ? '' : e.target.value)}
+                onChange={(e: SelectChangeEvent) => {
+                    const value = e.target.value;
+                    onFilterChange('artist', value === 'All' ? '' : value);
+                }}
                 label="Artist"
+                data-testid="filter-artist"
             >
                 <MenuItem value="All">All</MenuItem>
-                {artists.map((artist) => (
+                {[...new Set(tracksData?.tracks.map((t) => t.artist))].map((artist) => (
                     <MenuItem key={artist} value={artist}>
                         {artist}
                     </MenuItem>
@@ -47,3 +70,5 @@ const TrackFilters = ({ searchTerm, onSearch, sort, onSortChange, genres, filter
         </FormControl>
     </Box>
 );
+
+export default FiltersSection;

@@ -1,5 +1,152 @@
-/*
-import { useState } from 'react';
+import { Container, Paper, Typography } from '@mui/material';
+import useTrackPageState from '../hooks/useTrackPageState.ts';
+import HeaderSection from '../components/TrackPageHeader/TrackPageHeader.tsx';
+import FiltersSection from '../components/TrackFilters/TrackFilters.tsx';
+import TracksListSection from '../components/TrackList/TrackList.tsx';
+import BulkActionsSection from '../components/BulkActionsSection/BulkActionsSection.tsx';
+import TrackForm from '../components/TrackForm/TrackForm.tsx';
+import ConfirmDialog from '../components/ConfirmDialog/ConfirmDialog.tsx';
+import LoadingIndicator from '../components/LoadingIndicator/LoadingIndicator.tsx';
+import CustomPagination from "../components/CustomPagination/CustomPagination.tsx";
+
+const TrackPage = () => {
+    const state = useTrackPageState();
+
+    return (
+        <Container disableGutters
+                   maxWidth={false}
+                   sx={{
+                       width: '100vw',
+                       height: '100vh',
+                       display: 'flex',
+                       flexDirection: 'column',
+                   }}>
+            <Paper sx={{
+                flex: 1,
+                p: 3,
+                display: 'flex',
+                flexDirection: 'column',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+            }}>
+                <HeaderSection
+                    isSelectMode={state.isSelectMode}
+                    onToggleSelectMode={() => state.setIsSelectMode(!state.isSelectMode)}
+                    onOpenModal={() => state.setIsModalOpen(true)}
+                />
+                <FiltersSection
+                    searchTerm={state.searchTerm}
+                    onSearchChange={state.setSearchTerm}
+                    sort={state.sort}
+                    onSortChange={state.handleSortChange}
+                    filter={state.filter}
+                    onFilterChange={state.handleFilterChange}
+                    genres={state.genres}
+                    tracksData={state.tracksData}
+                />
+                <BulkActionsSection
+                    isSelectMode={state.isSelectMode}
+                    selectedTracks={state.selectedTracks}
+                    onToggleSelectAll={() => state.setSelectedTracks((prev) =>
+                        prev.length === state.tracksData?.tracks.length
+                            ? []
+                            : state.tracksData?.tracks.map((t) => t.id)
+                    )}
+                    onBulkDelete={() => state.setIsBulkConfirmOpen(true)}
+                    tracksData={state.tracksData}
+                />
+                {state.isLoading ? (
+                    <LoadingIndicator />
+                ) : state.isError ? (
+                    <Typography color="error">Error loading tracks</Typography>
+                ) : state.tracksData?.tracks.length === 0 ? (
+                    <Typography variant="h6" align="center" sx={{ mt: 4 }}>
+                        No Tracks Available
+                    </Typography>
+                ) : (
+                    <>
+                        <TracksListSection
+                            tracksData={state.tracksData}
+                            isSelectMode={state.isSelectMode}
+                            selectedTracks={state.selectedTracks}
+                            onSelectTrack={state.handleSelectTrack}
+                            onEditTrack={(id) => {
+                                state.setEditingTrackId(id);
+                                state.setIsModalOpen(true);
+                            }}
+                            onDeleteTrack={(id) => state.setDeletingTrackId(id)}
+                        />
+                        <CustomPagination
+                            data-testid='pagination'
+                            currentPage={state.page}
+                            totalPages={state.tracksData?.totalPages}
+                            onPageChange={state.setPage}
+                        />
+                    </>
+                )}
+            </Paper>
+            <TrackForm
+                open={state.isModalOpen || !!state.editingTrackId}
+                onClose={() => {
+                    state.setIsModalOpen(false);
+                    state.setEditingTrackId(null);
+                }}
+                onSubmit={(formData) => {
+                    if (state.editingTrackId) {
+                        state.updateTrackMutation.mutate({
+                            id: state.editingTrackId,
+                            data: formData,
+                        });
+                    } else {
+                        state.createTrackMutation.mutate(formData);
+                    }
+                    state.setIsModalOpen(false);
+                    state.setEditingTrackId(null);
+                }}
+                track={state.tracksData?.tracks.find(t => t.id === state.editingTrackId)}
+                genres={state.genres || []}
+            />
+            <ConfirmDialog
+                open={!!state.deletingTrackId}
+                onClose={() => state.setDeletingTrackId(null)}
+                onConfirm={() => {
+                    state.deleteMutation.mutate(+state.deletingTrackId!);
+                    state.setDeletingTrackId(null);
+                }}
+                title="Delete Track"
+                message="Are you sure you want to delete this track?"
+            />
+            <ConfirmDialog
+                open={state.isBulkConfirmOpen}
+                onClose={() => state.setIsBulkConfirmOpen(false)}
+                onConfirm={() => state.deleteMultipleMutation.mutate(state.selectedTracks)}
+                title="Delete Selected Tracks"
+                message="Are you sure you want to delete the selected tracks?"
+            />
+        </Container>
+    );
+};
+
+export default TrackPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*import { useState } from 'react';
 import {
     Box,
     Button,
@@ -332,26 +479,18 @@ const TrackPage = () => {
     );
 };
 
-export default TrackPage;
-*/
+export default TrackPage;*/
 
-import {
-    Container,
-    Paper,
-    Box,
-    Typography,
-    Button,
-    Grid
-} from '@mui/material';
-import { Add, Delete } from '@mui/icons-material';
+/*import { Container, Paper, Typography } from '@mui/material';
+import { useTrackPageState } from '../hooks/useTrackPageState';
+import TrackPageHeader from '../components/TrackPageHeader/TrackPageHeader';
 import TrackFilters from '../components/TrackFilters/TrackFilters.tsx';
-import SelectActions from '../components/TrackSelectionToolbar/TrackSelectionToolbar.tsx';
-import TrackItem from '../components/TrackItem/TrackItem.tsx';
+import TrackSelectionToolbar from '../components/TrackSelectionToolbar/TrackSelectionToolbar.tsx';
+import TrackList from '../components/TrackList/TrackList.tsx';
 import CustomPagination from '../components/CustomPagination/CustomPagination.tsx';
+import TrackForm from '../components/TrackForm/TrackForm.tsx';
+import ConfirmDialog from '../components/ConfirmDialog/ConfirmDialog.tsx';
 import LoadingIndicator from '../components/LoadingIndicator/LoadingIndicator.tsx';
-import TrackFormModal from '../components/TrackPage/TrackFormModal.tsx';
-import DeleteConfirmDialogs from '../components/TrackPage/DeleteConfirmDialogs.tsx';
-import useTrackPageState from '../hooks/useTrackPageState.ts';
 
 const TrackPage = () => {
     const state = useTrackPageState();
@@ -359,21 +498,261 @@ const TrackPage = () => {
     return (
         <Container disableGutters maxWidth={false} sx={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
             <Paper sx={{ flex: 1, p: 3, display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
+                <TrackPageHeader
+                    isSelectMode={state.isSelectMode}
+                    onToggleSelectMode={state.toggleSelectMode}
+                    onOpenModal={state.openCreateModal}
+                />
+
+                <TrackFilters
+                    searchTerm={state.searchTerm}
+                    onSearchChange={state.setSearchTerm}
+                    sort={state.sort}
+                    onSortChange={state.setSort}
+                    genres={state.genres}
+                    filter={state.filter}
+                    onFilterChange={state.handleFilterChange}
+                    artists={state.artists}
+                />
+
+                {state.isSelectMode && (
+                    <TrackSelectionToolbar
+                        selectedCount={state.selectedTracks.length}
+                        allSelected={state.areAllSelected}
+                        onToggleAll={state.toggleSelectAll}
+                        onDeleteSelected={state.openBulkDeleteConfirm}
+                    />
+                )}
+
+                {state.isLoading ? (
+                    <LoadingIndicator />
+                ) : state.isError ? (
+                    <Typography color='error'>Error loading tracks</Typography>
+                ) : (
+                    <>
+                        <TrackList
+                            tracks={state.tracks}
+                            isSelectMode={state.isSelectMode}
+                            selectedTracks={state.selectedTracks}
+                            onEdit={state.openEditModal}
+                            onDelete={state.confirmDelete}
+                            onSelect={state.handleSelect}
+                        />
+                        <CustomPagination
+                            currentPage={state.page}
+                            totalPages={state.totalPages}
+                            onPageChange={state.setPage}
+                        />
+                    </>
+                )}
+            </Paper>
+
+            <TrackForm
+                open={state.isFormOpen}
+                onClose={state.closeForm}
+                onSubmit={state.handleSubmit}
+                track={state.editingTrack}
+                genres={state.genres}
+            />
+
+            <ConfirmDialog
+                open={state.isSingleDeleteOpen}
+                onClose={state.closeSingleDelete}
+                onConfirm={state.handleSingleDelete}
+                title="Delete Track"
+                message="Are you sure you want to delete this track?"
+            />
+
+            <ConfirmDialog
+                open={state.isBulkDeleteOpen}
+                onClose={state.closeBulkDelete}
+                onConfirm={state.handleBulkDelete}
+                title="Delete Selected Tracks"
+                message={`Are you sure you want to delete ${state.selectedTracks.length} selected tracks?`}
+            />
+        </Container>
+    );
+};
+
+export default TrackPage;*/
+
+
+
+//MAIN
+
+/*
+import {
+    Box,
+    Button,
+    Container,
+    Grid,
+    Paper,
+    Typography,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    FormControlLabel,
+    Checkbox,
+    SelectChangeEvent
+} from '@mui/material';
+import { Add, Delete } from '@mui/icons-material';
+import TrackItem from '../components/TrackItem/TrackItem.tsx';
+import TrackForm from '../components/TrackForm/TrackForm.tsx';
+import ConfirmDialog from '../components/ConfirmDialog/ConfirmDialog.tsx';
+import SearchBar from '../components/SearchBar/SearchBar.tsx';
+import CustomPagination from '../components/CustomPagination/CustomPagination.tsx';
+import LoadingIndicator from '../components/LoadingIndicator/LoadingIndicator.tsx';
+import useTrackPageState from "../hooks/useTrackPageState.ts";
+
+const TrackPage = () => {
+
+    const state = useTrackPageState();
+
+    return (
+        <Container
+            disableGutters
+            maxWidth={false}
+            sx={{
+                width: '100vw',
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
+            <Paper
+                sx={{
+                    flex: 1,
+                    p: 3,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                }}
+            >
                 <Box display='flex' justifyContent='space-between' mb={3}>
-                    <Typography variant='h4' data-testid='tracks-header'>Music Tracks</Typography>
+                    <Typography variant='h4' data-testid='tracks-header'>
+                        Music Tracks
+                    </Typography>
                     <Box display='flex' gap={2}>
-                        <Button variant='contained' startIcon={<Add />} onClick={state.openCreateModal} data-testid='create-track-button'>
+                        <Button
+                            variant='contained'
+                            startIcon={<Add />}
+                            onClick={() => state.setIsModalOpen(true)}
+                            data-testid='create-track-button'
+                        >
                             Create Track
                         </Button>
-                        <Button variant='outlined' startIcon={<Delete />} onClick={state.toggleSelectMode} data-testid='select-mode-toggle'>
+                        <Button
+                            variant='outlined'
+                            startIcon={<Delete />}
+                            onClick={() => state.setIsSelectMode(!state.isSelectMode)}
+                            data-testid='select-mode-toggle'
+                        >
                             {state.isSelectMode ? 'Cancel' : 'Select'}
                         </Button>
                     </Box>
                 </Box>
 
-                <SearchFilters {...state} />
+                <Box display='flex' gap={2} mb={3} flexWrap='wrap'>
+                    <SearchBar
+                        value={state.searchTerm}
+                        onChange={state.setSearchTerm}
+                        data-testid='search-input'
+                    />
 
-                {state.isSelectMode && <SelectActions {...state} />}
+                    <FormControl sx={{ minWidth: 120 }}>
+                        <InputLabel>Sort By</InputLabel>
+                        <Select
+                            value={state.sort}
+                            onChange={state.handleSortChange}
+                            label='Sort By'
+                            data-testid='sort-select'
+                        >
+                            <MenuItem value='title'>Title</MenuItem>
+                            <MenuItem value='artist'>Artist</MenuItem>
+                            <MenuItem value='album'>Album</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ minWidth: 120 }}>
+                        <InputLabel id='genre-select-label'>Genre</InputLabel>
+                        <Select
+                            labelId='genre-select-label'
+                            value={state.filter.genre || 'All'}
+                            onChange={(e: SelectChangeEvent) => {
+                                const value = e.target.value;
+                                if (value === 'All') {
+                                    state.handleFilterChange('genre', '');
+                                } else {
+                                    state.handleFilterChange('genre', value);
+                                }
+                            }}
+                            label='Genre'
+                            data-testid='filter-genre'
+                        >
+                            <MenuItem value='All'>All</MenuItem>
+                            {state.genres?.map(genre => (
+                                <MenuItem key={genre} value={genre}>
+                                    {genre}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ minWidth: 120 }}>
+                        <InputLabel id='artist-select-label'>Artist</InputLabel>
+                        <Select
+                            labelId='artist-select-label'
+                            value={state.filter.artist || 'All'}
+                            onChange={(e: SelectChangeEvent) => {
+                                const value = e.target.value;
+                                if (value === 'All') {
+                                    state.handleFilterChange('artist', '');
+                                } else {
+                                    state.handleFilterChange('artist', value);
+                                }
+                            }}
+                            label='Artist'
+                            data-testid='filter-artist'
+                        >
+                            <MenuItem value='All'>All</MenuItem>
+                            {[...new Set(state.tracksData?.tracks.map(t => t.artist))].map(artist => (
+                                <MenuItem key={artist} value={artist}>{artist}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
+
+                {state.isSelectMode && (
+                    <Box display='flex' alignItems='center' gap={2} mb={2}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={state.selectedTracks.length === state.tracksData?.tracks.length}
+                                    onChange={() =>
+                                        state.setSelectedTracks((prev) =>
+                                            prev.length === state.tracksData?.tracks.length
+                                                ? []
+                                                : state.tracksData?.tracks.map((t) => t.id)
+                                        )
+                                    }
+                                    data-testid='select-all'
+                                />
+                            }
+                            label={`Selected ${state.selectedTracks.length}`}
+                        />
+                        {state.selectedTracks.length > 0 && (
+                            <Button
+                                variant='contained'
+                                color='error'
+                                startIcon={<Delete />}
+                                onClick={() => state.setIsBulkConfirmOpen(true)}
+                                data-testid='bulk-delete-button'
+                            >
+                                Delete Selected
+                            </Button>
+                        )}
+                    </Box>
+                )}
 
                 {state.isLoading ? (
                     <LoadingIndicator />
@@ -382,33 +761,85 @@ const TrackPage = () => {
                 ) : (
                     <>
                         <Grid container spacing={3}>
-                            {state.tracks?.map(track => (
+                            {state.tracksData?.tracks.map(track => (
                                 <Grid item xs={12} key={track.id}>
                                     <TrackItem
                                         track={track}
-                                        onEdit={() => state.editTrack(track.id)}
-                                        onDelete={() => state.confirmDeleteTrack(track.id)}
+                                        onEdit={() => {
+                                            state.setEditingTrackId(track.id);
+                                            state.setIsModalOpen(true);
+                                        }}
+                                        onDelete={() => state.setDeletingTrackId(track.id)}
                                         isSelectMode={state.isSelectMode}
                                         isSelected={state.selectedTracks.includes(track.id)}
-                                        onSelect={() => state.toggleTrackSelection(track.id)}
+                                        onSelect={() => state.handleSelectTrack(track.id)}
                                     />
                                 </Grid>
                             ))}
                         </Grid>
                         <CustomPagination
-                            currentPage={state.page}
-                            totalPages={state.totalPages}
-                            onPageChange={state.setPage}
                             data-testid='pagination'
+                            currentPage={state.page}
+                            totalPages={state.tracksData?.totalPages}
+                            onPageChange={state.setPage}
                         />
+
                     </>
                 )}
             </Paper>
 
-            <TrackFormModal {...state} />
-            <DeleteConfirmDialogs {...state} />
+            <TrackForm
+                open={state.isModalOpen || !!state.editingTrackId}
+                onClose={() => {
+                    state.setIsModalOpen(false);
+                    state.setEditingTrackId(null);
+                }}
+                onSubmit={(formData) => {
+                    if (state.editingTrackId) {
+                        state.updateTrackMutation.mutate({
+                            id: state.editingTrackId,
+                            data: {
+                                title: formData.title,
+                                artist: formData.artist,
+                                album: formData.album,
+                                genres: formData.genres,
+                                coverImage: formData.coverImage,
+                            }
+                        });
+                    } else {
+                        state.createTrackMutation.mutate(formData);
+                    }
+
+                    state.setIsModalOpen(false);
+                    state.setEditingTrackId(null);
+                }}
+                track={state.tracksData?.tracks.find(t => t.id === state.editingTrackId)}
+                genres={state.genres || []}
+            />
+
+            <ConfirmDialog
+                open={!!state.deletingTrackId}
+                onClose={() => state.setDeletingTrackId(null)}
+                onConfirm={() => {
+                    state.deleteMutation.mutate(+state.deletingTrackId!);
+                    state.setDeletingTrackId(null);
+                }}
+                title='Delete Track'
+                message='Are you sure you want to delete this track?'
+            />
+
+            <ConfirmDialog
+                open={state.isBulkConfirmOpen}
+                onClose={() => state.setIsBulkConfirmOpen(false)}
+                onConfirm={() => {
+                    state.deleteMultipleMutation.mutate(state.selectedTracks);
+                    state.setIsBulkConfirmOpen(false);
+                }}
+                title='Delete Selected Tracks'
+                message={`Are you sure you want to delete ${state.selectedTracks.length} selected tracks?`}
+            />
         </Container>
     );
 };
 
-export default TrackPage;
+export default TrackPage;*/

@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { uploadFile } from '../../api/dropboxService.ts';
-import { uploadCloudinaryLinkToBackend } from '../../api/tracks.ts';
+import { uploadFileNameToBackend } from '../../api/tracks.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import {IUploadModal} from './Interface';
 
@@ -35,7 +35,7 @@ const UploadModal = ({ open, trackId, onClose, onUploadSuccess }: IUploadModal) 
             const ext = file.name.split('.').pop();
             const renamedFile = new File([file], `${trackId}.${ext}`, { type: file.type });
             const url = await uploadFile(renamedFile, renamedFile.name);
-            await uploadCloudinaryLinkToBackend(trackId, url);
+            await uploadFileNameToBackend(trackId, url);
             queryClient.invalidateQueries(['tracks']);
             onUploadSuccess?.();
             onClose();

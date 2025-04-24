@@ -64,21 +64,31 @@ const TrackList: React.FC = () => {
 export default TrackList;
 */
 import { Grid } from '@mui/material';
-import TrackItem from '../TrackItem/TrackItem';
+import TrackItem from '../TrackItem/TrackItem.tsx';
 
-const TrackList = ({ tracks, onEdit, onDelete, isSelectMode, selectedTracks, onSelect }) => (
+const TracksListSection = ({
+                               tracksData,
+                               isSelectMode,
+                               selectedTracks,
+                               onSelectTrack,
+                               onEditTrack,
+                               onDeleteTrack
+                           }) => (
     <Grid container spacing={3}>
-        {tracks.map((track) => (
+        {tracksData?.tracks.map((track) => (
             <Grid item xs={12} key={track.id}>
                 <TrackItem
                     track={track}
-                    onEdit={() => onEdit(track.id)}
-                    onDelete={() => onDelete(track.id)}
+                    onEdit={() => onEditTrack(track.id)}
+                    onDelete={() => onDeleteTrack(track.id)}
                     isSelectMode={isSelectMode}
                     isSelected={selectedTracks.includes(track.id)}
-                    onSelect={() => onSelect(track.id)}
+                    onSelect={() => onSelectTrack(track.id)}
                 />
             </Grid>
         ))}
     </Grid>
 );
+
+export default TracksListSection;
+
