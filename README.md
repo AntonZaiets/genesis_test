@@ -12,14 +12,14 @@ Implemented optimistic updates to immediately reflect changes in the user interf
 While performing a task with files, I didn't notice any logic for saving files on the back end, so I used the DropBox API for this. The API key is automatically updated, so unfortunately, it will not be valid during your test. Please write to me in the telegram @quantumop to provide you with a valid key, you will only need to substitute it in the .env file.
 
 
-# ADR 0001: Improving usability through intuitive and accessible UI/UX
+# ADR 0001: Improving usability, maintainability, and scalability through a unified design system and development tooling
 
 
 
 
 ## Context
 
-The project already supports key functionality such as adding, editing, deleting, sorting, and playing audio tracks. However, the current user experience suffers from several usability issues:
+The project already supports key functionality such as adding, editing, deleting, sorting, and playing audio tracks. However, the current user experience suffers from several usability, maintainability, and scalability limitations:
 
 - The UI is minimalistic but lacks clear visual hierarchy.
 
@@ -27,22 +27,32 @@ The project already supports key functionality such as adding, editing, deleting
 
 - The interface is not responsive well, limiting usability on mobile devices.
 
-- Does not provide compatibility with programs for people with disabilities
+- Does not provide compatibility with programs for people with disabilities.
 
-These issues make the system less intuitive and harder to use efficiently, particularly for non-technical or first-time users.
+- Users cannot toggle between light and dark themes.
+
+- Localization (i18n) is missing, limiting the application to a single language.
+
+- There is no UI-kit, making it harder to reuse and maintain components.
+
+- There is no CI/CD pipeline for validation and deployment automation.
+
+- There is no Storybook setup for component isolation and documentation.
+
+These issues make the system less intuitive and difficult to use effectively, especially for first-time users. It also affects the further expansion of the application and its maintain.
 
 
 
 
 ## Decision
 
-To improve usability, I propose implementing the following UI/UX changes:
+To improve usability, maintainability, and scalability I propose implementing the following changes:
 
 - Use contrast and layout to emphasize headings, buttons, and inputs.
 
 - Add toast notifications for success and failure using libraries like react-hot-toast or notistack.
 
-- Display loading spinners during deletions.
+- Display loading during wait request from backed.
 
 - Allow users to edit track properties like title or genre directly in the list view without opening a modal.
 
@@ -50,13 +60,23 @@ To improve usability, I propose implementing the following UI/UX changes:
 
 - Ensure the interface works well with screen readers and assistive technologies.
 
+- Extract all UI elements (buttons, inputs, modals, etc.) into a central components/ui/ directory.
+
+- Write test using Vite-Test.
+
+- Set up Storybook for isolated component development, testing, and documentation.
+
+- Use react-i18next to support multi-language capabilities (e.g., English and Ukrainian).
+
+- Add theme toggling functionality using Tailwind theme configuration.
+
+- Set up a GitHub Actions workflow to automatically run linting and testing on pull requests.
+
 
 
 ## Rationale
 
-Improving usability directly enhances the product's effectiveness and user satisfaction. A more intuitive interface reduces the learning curve, minimizes user errors, and increases engagement. In projects involving content management (such as audio tracks), users expect quick, predictable interactions. Clear feedback, keyboard support, and mobile responsiveness are critical for creating a polished, professional application.
-
-Furthermore, these improvements align with industry best practices and are relatively low-cost in terms of implementation, especially given the existing clean codebase. Enhancing usability now also reduces the risk of costly redesigns in the future.
+Improving the user experience along with introducing modern development tools transforms the project into a more scalable and production-ready solution.
 
 
 
@@ -74,11 +94,26 @@ Proposed
 
 - Better overall user experience and satisfaction.
 
-- Clearer user actions reduce mistakes and support task completion.
-
 - Improved accessibility and mobile usability broaden the user base.
 
 - A more professional, polished interface.
+
+- Faster development through reusable components.
+
+- Reduced risk of bugs and regressions via CI/CD.
+
+- Enhanced developer documentation through Storybook.
+
+
+
+### Negative:
+
+- Additional development time and testing.
+
+- Slightly increased complexity in the codebase.
+
+- Team members may require onboarding for new tools and workflows.
+
 
 
 
